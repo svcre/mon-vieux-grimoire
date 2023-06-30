@@ -1,3 +1,5 @@
+
+
 const Book = require('../models/book.js');
 
 // permet de créer un livre
@@ -7,8 +9,7 @@ exports.createBook = (req, res, next) => {
     const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
-        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, .
-        // création d'une url à partir du fichier ajouté par l'utilisateur avec multer
+        imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}`, // création d'une url à partir du fichier ajouté par l'utilisateur avec multer
     })
     book.save()
     .then(() => {res.status(201).json({message: 'objet enregistré !'})})
@@ -64,7 +65,6 @@ exports.getBook = (req, res, next) => {
 
 // permet d'ajouter une note sur une page existante et de recalculer la note moyenne
 exports.addRating = (req, res, next) => {
-    console.log(req.body)
     Book.findOne({ _id: req.params.id })
         .then(book => {
             // Ajout de la note dans la bdd
@@ -84,4 +84,15 @@ exports.addRating = (req, res, next) => {
             }
         })
         .catch(error => res.status(400).json({error}))
-}
+};
+
+// permet de trouver les 3 meilleurs livres
+exports.bestRating = (req, res, next) => {
+    Book
+    .find()
+    .sort({ averageRating: -1 }) // -1 affiche en décroissant (1 affiche en croissant)
+    .limit(3) //limite l'affichage à 3 éléments
+    .then(book => res.status(200).json(book))
+    .catch(error => res.status(400).json({error}))
+
+};

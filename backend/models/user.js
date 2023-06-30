@@ -8,5 +8,6 @@ const userSchema = mongoose.Schema({
 });
 
 userSchema.plugin(uniqueValidator);
+// plugin permettant qu'une adresse email ne soit utilisée qu'une seule fois
 
 module.exports = mongoose.model('User', userSchema);
