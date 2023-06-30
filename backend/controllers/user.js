@@ -22,7 +22,6 @@ exports.login = (req, res, next) => {
         .then(user => {
             if (!user) {
                 return res.status(401).send('Un champ est incorrect')
-                //return res.status(401).json({ message: 'Un champ est incorrect'});
             }
             bcrypt.compare(req.body.password, user.password)
                 .then(valid => {
