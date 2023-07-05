@@ -1,3 +1,4 @@
+// import de mongoose, qui permet d'échanger avec la base de donnée
 const mongoose = require('mongoose');
 
 const bookSchema = mongoose.Schema({

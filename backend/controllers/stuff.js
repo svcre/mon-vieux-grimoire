@@ -1,11 +1,14 @@
 
 
 const Book = require('../models/book.js');
+const sharp = require('sharp');
+const fs = require('fs');
 
 // permet de créer un livre
 exports.createBook = (req, res, next) => {
     const bookObject = JSON.parse(req.body.book)
     delete bookObject._id
+    resize(req)
     const book = new Book({
         ...bookObject,
         userId: req.auth.userId,
@@ -18,6 +21,7 @@ exports.createBook = (req, res, next) => {
 
 // permet de modifier un livre
 exports.modifyBook = (req, res, next) => {
+    resize(req)
     const bookObject = req.file ? {
         ...JSON.parse(req.body.book),
         imageUrl: `${req.protocol}://${req.get('host')}/images/${req.file.filename}` 
@@ -96,3 +100,13 @@ exports.bestRating = (req, res, next) => {
     .catch(error => res.status(400).json({error}))
 
 };
+
+function resize(req) {
+    sharp(req.file.path).resize({ 
+        width: 500, 
+        height: 500,
+        fit: sharp.fit.cover, 
+    }).toFile("images/" + req.file.filename).then(() => {
+        fs.rmSync(req.file.path, { force: true });
+    })
+}
